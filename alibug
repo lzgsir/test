@@ -1,0 +1,23 @@
+1.虚拟主机PHP程序提示“mysqlnd cannot connect to MySQL 4.1+ using the old insecure“错误的原因和解决
+
+该问题原因是出于安全考虑PHP5.3版本之后连接MySQL都统一使用41位加密方式，如果在虚机控制面板cp.hichina.com修改PHP版本，
+比如5.2改成5.3，而并没有修改数据库加密方式，仍然使用16位加密方式，连接数据库就会报如下错误：
+Could not connect: mysqlnd cannot connect to MySQL 4.1+ using the old insecure authentication. Please use an administration tool to reset your password with the command SET PASSWORD = PASSWORD('your_existing_password'). This will store a new, and more secure, hash value in mysql.user. If this user is used in other scripts executed by PHP 5.2 or earlier you might need to remove the old-passwords flag from your my.cnf file。
+
+该问题可以尝试通过以下步骤解决：
+登陆cp.hichina.com【主机管理控制台】->【数据库管理】，重置数据库密码，加密模式选择41位加密。
+同理如果是PHP5.3改成5.2版本，就修改数据库密码加密模式从41位改成16位。
+
+
+2.[PDOException]SQLSTATE[42000]: Syntax error or access violation: 1115 Unknown character set: 'utf8mb4'
+原因是因为mysql5.1之前没有utf8mb4编码，laravel5之后mysql编码默认设置成了utf8mb4，如果你的mysql版本低就不能支持utf8mb4。
+解决方法：
+在config/database.php中
+
+'charset' => 'utf8mb4',
+'collation' => 'utf8mb4_unicode_ci',
+改为
+'charset' => 'utf8',
+'collation' => 'utf8_unicode_ci',
+
+3.
